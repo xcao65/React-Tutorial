@@ -1,0 +1,32 @@
+[
+    {
+        "title": "1st Image",
+        "altText": "example image",
+        "description": "This is the first image",
+        "url": "./image/1.jpeg"
+    },
+    {
+        "title": "2nd Image",
+        "altText": "example image",
+        "description": "This is the second image",
+        "url": "./image/1.jpeg"
+    },
+    {
+        "title": "3rd Image",
+        "altText": "example image",
+        "description": "This is the third image",
+        "url": "./image/1.jpeg"
+    },
+    {
+        "title": "4th Image",
+        "altText": "example image",
+        "description": "This is the fourth image",
+        "url": "./image/1.jpeg"
+    },
+    {
+        "title": "5th Image",
+        "altText": "example image",
+        "description": "This is the fifth image",
+        "url": "./image/1.jpeg"
+    }
+]
