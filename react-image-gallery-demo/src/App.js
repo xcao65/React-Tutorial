@@ -5,7 +5,7 @@ import data from './data.json'
 function App() {
   return (
     <div className="App">
-      <Gallary style={{display: "flex", flexDirection: "column", alignItems: "center"}}/>
+      <Gallary/>
     </div>
   );
 }
@@ -36,7 +36,7 @@ class Gallary extends Component {
 
   render() {
     return (
-      <div>
+      <div className='wrapper'>
         <Preview imageSelected={this.state.imageSelected}/>
         <Album images={this.state.images} handleClick={this.handleClick}/>
       </div>
@@ -46,10 +46,10 @@ class Gallary extends Component {
 
 const Album = ({images, handleClick}) => {
   return (
-    <ul>
-      {images.map((image, index) => {
+    <ul className='wrapper'>
+      {images.map((image) => {
         return (
-          <ImageItem image={image} key={"img-" + index} handleClick={handleClick}/>
+          <ImageItem image={image} key={image} handleClick={handleClick}/>
         );
       })}
     </ul>
@@ -58,9 +58,18 @@ const Album = ({images, handleClick}) => {
 
 const ImageItem = ({image, handleClick}) => {
   return (
-    <li className="image-item" style={{display: "flex", alignItems: "center", cursor: "pointer"}} onClick={() => handleClick(image)}>
+    <li className="image-item wrapper" onClick={() => handleClick(image)}>
       <img src={image.url} alt={image.altText} style={{maxWidth: "200px"}}/>
-      <p>{image.title}</p>
+      <div className='info'>
+        <p>{image.title}</p>
+        <p>{image.altText}</p>
+      </div>
+      <div className='info middle'>
+        <p>Location</p>
+      </div>
+      <div className='info'>
+        <p>timestamp</p>
+      </div>
     </li>
   );
 }
@@ -70,9 +79,11 @@ const Preview = ({imageSelected}) => {
     return <div>Please Select An Image to Preview</div>
   }
   return (
-    <div>
+    <div className='wrapper'>
       <h2>{imageSelected.title}</h2>
-      <img src={imageSelected.url} alt={imageSelected.altText} />
+      <div className='wrapper container'>
+        <img src={imageSelected.url} alt={imageSelected.altText} id='preview'/>
+      </div>
       <p>{imageSelected.description}</p>
     </div>
   );
