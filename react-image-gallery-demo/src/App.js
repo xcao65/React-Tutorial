@@ -1,6 +1,6 @@
 import './App.css';
-import React, {Component} from 'react';
-import data from './data.json'
+import React, {Component, useState} from 'react';
+import search from './search';
 
 function App() {
   return (
@@ -12,18 +12,34 @@ function App() {
 
 class Gallary extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       images:[],
-      imageSelected: null
-    }
+      imageSelected: null,
+    };
     this.handleClick = this.handleClick.bind(this);
+    this.fetchImages = this.fetchImages.bind(this);
   }
-  
-  componentDidMount() {
+
+  async fetchImages(term) {
+    let results = [];
+    if (!term) {
+      return;
+    }
+    try {
+      results = await search.get('', {
+        params: {
+          q: term
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      results = []
+    }
+    const data = results?.data?.items || [];
     this.setState({
       images: data
-    })
+    });
   }
 
   handleClick(image) {
@@ -38,10 +54,28 @@ class Gallary extends Component {
     return (
       <div className='wrapper'>
         <Preview imageSelected={this.state.imageSelected}/>
+        <SearchBar handleSearch={this.fetchImages}/>
         <Album images={this.state.images} handleClick={this.handleClick}/>
       </div>
     );
   }
+}
+
+const SearchBar = (props) => {
+  const [term, setTerm] = useState('');
+  const onFormSubmit = event => {
+    // prevent form's default get request sent by browser
+    // and page refresh
+    // so that custom handleSearch gets to run
+    event.preventDefault();
+    props.handleSearch(term);
+  }
+  return (
+    <form className='searchbar' onSubmit={onFormSubmit}>
+      <input className='searchbar' type='text' onChange={(e) => setTerm(e.target.value)}/>
+      <input type='submit' value='Search' />
+    </form>
+  );
 }
 
 const Album = ({images, handleClick}) => {
@@ -49,7 +83,7 @@ const Album = ({images, handleClick}) => {
     <ul className='wrapper'>
       {images.map((image) => {
         return (
-          <ImageItem image={image} key={image} handleClick={handleClick}/>
+          <ImageItem image={image} key={image.link} handleClick={handleClick}/>
         );
       })}
     </ul>
@@ -59,16 +93,16 @@ const Album = ({images, handleClick}) => {
 const ImageItem = ({image, handleClick}) => {
   return (
     <li className="image-item wrapper" onClick={() => handleClick(image)}>
-      <img src={image.url} alt={image.altText} style={{maxWidth: "200px"}}/>
+      <img src={image?.image?.thumbnailLink} alt={image?.altText} style={{maxWidth: "200px"}}/>
       <div className='info'>
-        <p>{image.title}</p>
-        <p>{image.altText}</p>
+        <p>{image?.title}</p>
+        <p>{image?.displayLink}</p>
       </div>
       <div className='info middle'>
-        <p>Location</p>
+        <p>{image?.snippet}</p>
       </div>
       <div className='info'>
-        <p>timestamp</p>
+        <p>{image?.displayLink}</p>
       </div>
     </li>
   );
@@ -82,9 +116,9 @@ const Preview = ({imageSelected}) => {
     <div className='wrapper'>
       <h2>{imageSelected.title}</h2>
       <div className='wrapper container'>
-        <img src={imageSelected.url} alt={imageSelected.altText} id='preview'/>
+        <img src={imageSelected.link} alt={imageSelected.altText} id='preview'/>
       </div>
-      <p>{imageSelected.description}</p>
+      <p>{imageSelected.snippet}</p>
     </div>
   );
 }
